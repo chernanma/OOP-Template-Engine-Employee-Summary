@@ -5,6 +5,7 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 const logo = require('asciiart-logo');
+const employeesArr =[];
 
 //Adding Logo using  Asciiart module
 console.log(
@@ -33,7 +34,146 @@ const render = require("./lib/htmlRenderer");
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
+function initialQuestions() {
+    inquirer
+      .prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What's your manager's name ?"
+        },    
+        {
+            type: "input",
+            name: "id",
+            message: "What is your manager's ID ?"
+          },
+          {
+            type: "input",
+            name: "email",
+            message: "What is your manager's email ?"
+          },
+          {
+            type: "input",
+            name: "number",
+            message: "What is your manager's office number ?"            
+          },
+          { 
+            type: "list",
+            name: "type_member",
+            message: "What type of team member would would you like to add ? (use arrow keys)",
+            choices: ["Engineer","Intern","I don't want to add any more team memeber"]
+          },        
+      ])
+      .then(function(data){
+          let manager = new Manager(data.name,data.id,data.email,data.number);
+          employeesArr.push(manager);
+          if (data.type_member==="Engineer"){
+              engineerPrompt();
+          }else if(data.type_member==="Intern"){
+              internPrompt();
+          }else{
+              render(employeesArr);
+              console.log(employeesArr);
+              return;
+          }         
+         
+      });    
+      
+  }
 
+function engineerPrompt (){
+    inquirer
+    .prompt([
+      {
+          type: "input",
+          name: "name",
+          message: "What's your Engineer name ?"
+      },    
+      {
+          type: "input",
+          name: "id",
+          message: "What is your Engineer's ID ?"
+        },
+        {
+          type: "input",
+          name: "email",
+          message: "What is your Engineer's email ?"
+        },
+        {
+          type: "input",
+          name: "github",
+          message: "What is your Engineer's Github username ?"            
+        },
+        { 
+          type: "list",
+          name: "type_member",
+          message: "What type of team member would would you like to add ? (use arrow keys)",
+          choices: ["Engineer","Intern","I don't want to add any more team memeber"]
+        },        
+    ])
+    .then(function(data){
+        let engineer = new Engineer(data.name,data.id,data.email,data.github);
+        employeesArr.push(engineer);
+        if (data.type_member==="Engineer"){
+            engineerPrompt();
+        }else if(data.type_member==="Intern"){
+            internPrompt();
+        }else{
+            render(employeesArr);
+            console.log(employeesArr);
+            return;
+        }         
+    });
+
+}
+
+function internPrompt (){
+    inquirer
+    .prompt([
+      {
+          type: "input",
+          name: "name",
+          message: "What's your Intern name ?"
+      },    
+      {
+          type: "input",
+          name: "id",
+          message: "What is your Intern's ID ?"
+        },
+        {
+          type: "input",
+          name: "email",
+          message: "What is your Intern's email ?"
+        },
+        {
+          type: "input",
+          name: "school",
+          message: "What is your Intern's school name ?"            
+        },
+        { 
+          type: "list",
+          name: "type_member",
+          message: "What type of team member would would you like to add ? (use arrow keys)",
+          choices: ["Engineer","Intern","I don't want to add any more team memeber"]
+        },        
+    ])
+    .then(function(data){
+        let intern = new Intern(data.name,data.id,data.email,data.github);
+        employeesArr.push(intern);
+        if (data.type_member==="Engineer"){
+            engineerPrompt();
+        }else if(data.type_member==="Intern"){
+            internPrompt();
+        }else{
+            render(employeesArr);
+            console.log(employeesArr);
+            return;
+        }         
+    });
+
+}
+
+  initialQuestions();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
