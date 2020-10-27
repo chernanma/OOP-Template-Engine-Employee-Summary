@@ -72,9 +72,11 @@ function initialQuestions() {
           }else if(data.type_member==="Intern"){
               internPrompt();
           }else{
-              render(employeesArr);
-              console.log(employeesArr);
-              return;
+            render(employeesArr);   
+            fs.rmdirSync("output",{recursive:true,});        
+            fs.mkdirSync(path.join(__dirname, "output"));              
+            return fs.writeFileSync(outputPath,render(employeesArr));                        
+ 
           }         
          
       });    
@@ -119,9 +121,10 @@ function engineerPrompt (){
         }else if(data.type_member==="Intern"){
             internPrompt();
         }else{
-            render(employeesArr);
-            console.log(employeesArr);
-            return;
+          render(employeesArr);   
+          fs.rmdirSync("output",{recursive:true,});        
+          fs.mkdirSync(path.join(__dirname, "output"));              
+          return fs.writeFileSync(outputPath,render(employeesArr)); 
         }         
     });
 
@@ -165,9 +168,10 @@ function internPrompt (){
         }else if(data.type_member==="Intern"){
             internPrompt();
         }else{
-            render(employeesArr);
-            console.log(employeesArr);
-            return;
+            render(employeesArr);   
+            fs.rmdirSync("output",{recursive:true,});        
+            fs.mkdirSync(path.join(__dirname, "output"));              
+            return fs.writeFileSync(outputPath,render(employeesArr)); 
         }         
     });
 
