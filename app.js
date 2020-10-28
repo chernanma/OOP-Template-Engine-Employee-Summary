@@ -6,7 +6,7 @@ const path = require("path");
 const fs = require("fs");
 const logo = require('asciiart-logo');
 const employeesArr =[];
-
+let noBlankRe= /^(?!\s*$).+/;
 //Adding Logo using  Asciiart module
 console.log(
     logo({
@@ -29,7 +29,71 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { ok } = require("assert");
+const { isNumber } = require("util");
 
+// Validations //
+
+//Validating Name - not blank 
+const valName= async(name)=>{  
+  var OK = noBlankRe.exec(name);
+  if (!OK){
+    return "Name is required!";
+  } 
+  return true;
+  
+};
+
+//validation just numbers for ID
+const valID= async (id)=>{
+  var OK = noBlankRe.exec(id);
+  if (!OK || !Number(id)){
+    return "ID must contain just numbers";
+  }
+  return true;
+};
+
+function Number(n){
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+// Validating correct format for email address 
+const valEmail = async (input) => {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (!re.test(input)) {
+     return 'Email no valid!, Please enter a correct email address';
+  }
+  return true;
+}; 
+
+//Validating 10 digit phone number
+const valPhone = async(number)=>{
+  const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+  if (!phoneRegex.test(number)) {
+    return "Invalid phone number, It must contain 10 digits";
+      
+  } 
+  return true;
+};
+
+//Validating no blank for School name
+const valSchool = async(school)=>{
+  var OK = noBlankRe.exec(school);
+  if (!OK){
+    return "School Name is required!";
+  } 
+  return true;
+
+};
+
+//Validating correct github format account 
+const valGitHub = async (input) => {
+  const re = /\B@((?!.*(-){2,}.*)[a-z0-9][a-z0-9-]{0,38}[a-z0-9])/ig;
+  if (!re.test(input)) {
+     return 'Incorrect asnwer.It is not a valid GitHub username. Format: @valid or @valid-username';
+  }
+  return true;
+}; 
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -40,22 +104,26 @@ function initialQuestions() {
         {
             type: "input",
             name: "name",
-            message: "What's your manager's name ?"
+            message: "What's your manager's name ?",
+            validate: valName
         },    
         {
             type: "input",
             name: "id",
-            message: "What is your manager's ID ?"
+            message: "What is your manager's ID ?",
+            validate: valID
           },
           {
             type: "input",
             name: "email",
-            message: "What is your manager's email ?"
+            message: "What is your manager's email ?",
+            validate: valEmail
           },
           {
             type: "input",
             name: "number",
-            message: "What is your manager's office number ?"            
+            message: "What is your manager's office number ?", 
+            validate:valPhone           
           },
           { 
             type: "list",
@@ -83,28 +151,33 @@ function initialQuestions() {
       
   }
 
+  // Prompt to gather information if employee is an Engineer
 function engineerPrompt (){
     inquirer
     .prompt([
       {
           type: "input",
           name: "name",
-          message: "What's your Engineer name ?"
+          message: "What's your Engineer name ?",
+          validate: valName
       },    
       {
           type: "input",
           name: "id",
-          message: "What is your Engineer's ID ?"
+          message: "What is your Engineer's ID ?",
+          validate: valID
         },
         {
           type: "input",
           name: "email",
-          message: "What is your Engineer's email ?"
+          message: "What is your Engineer's email ?",
+          validate: valEmail
         },
         {
           type: "input",
           name: "github",
-          message: "What is your Engineer's Github username ?"            
+          message: "What is your Engineer's Github username ?",
+          valGitHub            
         },
         { 
           type: "list",
@@ -130,28 +203,34 @@ function engineerPrompt (){
 
 }
 
+// Prompt to gather information if employee is an Intern
 function internPrompt (){
     inquirer
     .prompt([
       {
           type: "input",
           name: "name",
-          message: "What's your Intern name ?"
+          message: "What's your Intern name ?",
+          validate: valName
+         
       },    
       {
           type: "input",
           name: "id",
-          message: "What is your Intern's ID ?"
+          message: "What is your Intern's ID ?",
+          validate: valID
         },
         {
           type: "input",
           name: "email",
-          message: "What is your Intern's email ?"
+          message: "What is your Intern's email ?",
+          validate: valEmail
         },
         {
           type: "input",
           name: "school",
-          message: "What is your Intern's school name ?"            
+          message: "What is your Intern's school name ?",
+          valSchool            
         },
         { 
           type: "list",
@@ -175,26 +254,8 @@ function internPrompt (){
         }         
     });
 
+    
+
 }
 
-  initialQuestions();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+initialQuestions();
