@@ -88,7 +88,7 @@ const valSchool = async(school)=>{
 
 //Validating correct github format account 
 const valGitHub = async (input) => {
-  const re = /\B@((?!.*(-){2,}.*)[a-z0-9][a-z0-9-]{0,38}[a-z0-9])/ig;
+  const re = /\B((?!.*(-){2,}.*)[a-z0-9][a-z0-9-]{0,38}[a-z0-9])/ig;
   if (!re.test(input)) {
      return 'Incorrect asnwer.It is not a valid GitHub username. Format: @valid or @valid-username';
   }
@@ -177,7 +177,7 @@ function engineerPrompt (){
           type: "input",
           name: "github",
           message: "What is your Engineer's Github username ?",
-          valGitHub            
+          validate : valGitHub            
         },
         { 
           type: "list",
@@ -230,7 +230,7 @@ function internPrompt (){
           type: "input",
           name: "school",
           message: "What is your Intern's school name ?",
-          valSchool            
+          validate: valSchool            
         },
         { 
           type: "list",
@@ -240,7 +240,7 @@ function internPrompt (){
         },        
     ])
     .then(function(data){
-        let intern = new Intern(data.name,data.id,data.email,data.github);
+        let intern = new Intern(data.name,data.id,data.email,data.school);
         employeesArr.push(intern);
         if (data.type_member==="Engineer"){
             engineerPrompt();
